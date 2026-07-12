@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiftHub — Entrena. Registra. Mejora.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ======= AUTH (login / register) ======= -->
+  <div class="screen" id="screen-auth">
+    <div class="home-bg">
+      <div class="home-wrap auth-wrap">
+        <p class="home-eyebrow">Bienvenido</p>
+        <h1 class="home-title" style="font-size:40px;">LIFT<span class="accent-text">HUB</span></h1>
+        <p class="home-slogan">Entrena. Registra. Mejora.</p>
+        <div class="stripe-bar"></div>
+
+        <div class="auth-card">
+          <div class="modal-tabs" id="authTabToggle">
+            <button type="button" class="active" data-mode="login">Iniciar sesión</button>
+            <button type="button" data-mode="register">Crear cuenta</button>
+          </div>
+          <div class="field">
+            <label>Correo</label>
+            <input type="email" id="authEmail" placeholder="tu@correo.com" autocomplete="email"/>
+          </div>
+          <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="authPassword" placeholder="Mínimo 6 caracteres" autocomplete="current-password"/>
+          </div>
+          <p class="hint" id="authStatus" style="min-height:16px;"></p>
+          <button class="btn-accent" id="authSubmitBtn" style="width:100%;">Iniciar sesión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= HOME ======= -->
+  <div class="screen" id="screen-home" style="display:none;">
+    <div class="home-bg">
+      <div class="home-wrap">
+        <div class="user-bar">
+          <span id="userEmailBadge">—</span>
+          <button class="back-btn" id="logoutBtn">Cerrar sesión</button>
+        </div>
+        <p class="home-eyebrow">Bienvenido de vuelta</p>
+        <h1 class="home-title">LIFT<span class="accent-text">HUB</span></h1>
+        <p class="home-slogan">Entrena. Registra. Mejora.</p>
+        <div class="stripe-bar"></div>
+        <div class="menu-tiles">
+          <button class="tile tile-food" id="goFood">
+            <span class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 23c-4.2 0-7.2-3.1-7.2-7.2 0-4.1 3-6.3 4.1-10.3 1 3.1 2.1 4.1 4.1 6.2 1-2.1 1-3.1 1-5.2 3.1 2.1 5.2 5.2 5.2 9.3 0 4.1-3.1 7.2-7.2 7.2z"/></svg>
+            </span>
+            <span class="tile-text">
+              <span class="tile-name">Combustible</span>
+              <span class="tile-sub">Registra tu comida, macros y calorías</span>
+            </span>
+            <span class="tile-arrow">&rarr;</span>
+          </button>
+          <button class="tile tile-gym" id="goGym">
+            <span class="tile-icon">
+              <svg viewBox="0 0 48 24" fill="currentColor">
+                <rect x="0" y="9" width="4" height="6" rx="1"/><rect x="5" y="7" width="4" height="10" rx="1"/>
+                <rect x="11" y="11" width="26" height="2"/>
+                <rect x="39" y="7" width="4" height="10" rx="1"/><rect x="44" y="9" width="4" height="6" rx="1"/>
+              </svg>
+            </span>
+            <span class="tile-text">
+              <span class="tile-name">Hierro</span>
+              <span class="tile-sub">Registra tus pesos y reps en el gym</span>
+            </span>
+            <span class="tile-arrow">&rarr;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= FOOD SCREEN ======= -->
+  <div class="screen" id="screen-food" style="display:none;">
+    <div class="subheader">
+      <button class="back-btn" id="backFromFood">&larr; Menú</button>
+      <span class="subheader-title">Combustible</span>
+    </div>
+    <div class="food-scope">
+      <div class="app">
+        <p class="eyebrow">Mi historial</p>
+        <div class="date-nav">
+          <button class="nav-btn" id="prevDay" title="Día anterior">&larr;</button>
+          <h1 class="date-label" id="dateLine" style="font-size:19px; margin:0;">—</h1>
+          <button class="nav-btn" id="nextDay" title="Día siguiente">&rarr;</button>
+          <button class="today-pill" id="gotoToday" style="display:none;">Hoy</button>
+        </div>
+
+        <div class="label">
+          <p class="label-title">Totales</p>
+          <hr class="rule-thick"/>
+          <div class="kcal-row">
+            <span class="kcal-label">Calorías</span>
+            <span class="kcal-value" id="kcalTotal">0</span>
+          </div>
+          <hr class="rule-med"/>
+          <div class="macro-row">
+            <span class="macro-name"><span class="dot" style="background:var(--protein)"></span>Proteína</span>
+            <span class="macro-value" id="proteinTotal">0 g</span>
+          </div>
+          <hr class="rule-thin"/>
+          <div class="macro-row">
+            <span class="macro-name"><span class="dot" style="background:var(--carbs)"></span>Carbohidratos</span>
+            <span class="macro-value" id="carbsTotal">0 g</span>
+          </div>
+          <hr class="rule-thin"/>
+          <div class="macro-row">
+            <span class="macro-name"><span class="dot" style="background:var(--fat)"></span>Grasas</span>
+            <span class="macro-value" id="fatTotal">0 g</span>
+          </div>
+          <p class="empty-note" id="emptyNote" style="display:none;">Nada registrado este día todavía.</p>
+        </div>
+
+        <div class="section-head">
+          <h2>Mis alimentos</h2>
+          <button class="btn" id="openAddFav">+ Nuevo alimento</button>
+        </div>
+        <div class="filter-row">
+          <input type="text" id="foodFilterInput" placeholder="Buscar en tus alimentos guardados…"/>
+        </div>
+        <div class="fav-grid" id="favGrid"></div>
+        <p class="hint" id="pastDayHint" style="display:none;">Estás agregando alimentos a un día pasado.</p>
+
+        <div class="section-head">
+          <h2 id="logHeading">Registro de hoy</h2>
+        </div>
+        <div id="logList"></div>
+      </div>
+
+      <div class="overlay" id="favOverlay">
+        <div class="modal">
+          <h3>Nuevo alimento</h3>
+
+          <div class="modal-tabs" id="modalTabToggle">
+            <button type="button" class="active" data-tab="manual">Manual</button>
+            <button type="button" data-tab="search">Buscar</button>
+            <button type="button" data-tab="scan">Escanear</button>
+          </div>
+
+          <!-- Manual entry panel -->
+          <div id="manualTabPanel">
+            <div class="field">
+              <label>Nombre</label>
+              <input type="text" id="fName" placeholder="ej. Plátano, Huevo revuelto, Dátil"/>
+            </div>
+
+            <div class="segmented" id="basisToggle">
+              <button type="button" class="active" data-basis="per100g">Por 100 g</button>
+              <button type="button" data-basis="portion">Por porción</button>
+            </div>
+
+            <div class="field" id="portionUnitField" style="display:none;">
+              <label>¿Cómo se llama la porción?</label>
+              <input type="text" id="fPortionUnit" placeholder="ej. huevo, dátil, plátano, taza"/>
+            </div>
+
+            <div class="row2">
+              <div class="field">
+                <label id="lblProtein">Proteína /100g</label>
+                <input type="number" id="fProtein" min="0" step="0.1" placeholder="g"/>
+              </div>
+              <div class="field">
+                <label id="lblCarbs">Carbos /100g</label>
+                <input type="number" id="fCarbs" min="0" step="0.1" placeholder="g"/>
+              </div>
+            </div>
+            <div class="field">
+              <label id="lblFat">Grasas /100g</label>
+              <input type="number" id="fFat" min="0" step="0.1" placeholder="g"/>
+            </div>
+            <p class="hint">Las calorías se calculan solas: proteína×4 + carbos×4 + grasas×9.</p>
+          </div>
+
+          <!-- Open Food Facts search panel -->
+          <div id="searchTabPanel" style="display:none;">
+            <div class="off-search-row">
+              <input type="text" id="offQuery" placeholder="ej. avena, coca cola zero, yogurt griego"/>
+              <button class="btn btn-small" id="offSearchBtn" type="button">Buscar</button>
+            </div>
+            <p class="off-status" id="offStatus"></p>
+            <div class="off-results" id="offResults"></div>
+            <p class="off-credit">Datos de Open Food Facts. La búsqueda por texto usa su servicio nuevo (todavía en beta) — si algún día falla seguido, usa "Escanear" o "Manual", que son más estables. Al elegir un resultado podrás revisar y ajustar los valores antes de guardar.</p>
+          </div>
+
+          <!-- Barcode scan panel -->
+          <div id="scanTabPanel" style="display:none;">
+            <p class="off-status" id="scanStatus">Alinea el código de barras dentro del recuadro, a unos 10-15 cm de la cámara, y mantén el celular quieto un par de segundos.</p>
+            <div id="scanReader"></div>
+            <div class="scan-controls">
+              <button class="btn btn-small" id="scanStartBtn" type="button">Iniciar cámara</button>
+              <button class="btn btn-small btn-ghost" id="scanStopBtn" type="button" style="display:none;">Detener</button>
+            </div>
+            <p class="off-credit">Necesita permiso de cámara del navegador. Al detectar un código, se busca el producto en Open Food Facts.</p>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-ghost" id="cancelFav">Cancelar</button>
+            <button class="btn" id="saveFav">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= GYM: MUSCLE GRID ======= -->
+  <div class="screen gym-scope" id="screen-gym-muscles" style="display:none;">
+    <div class="subheader">
+      <button class="back-btn" id="backFromGymMuscles">&larr; Menú</button>
+      <span class="subheader-title">Hierro</span>
+    </div>
+    <div class="gym-wrap">
+      <div class="stripe-bar"></div>
+      <div class="muscle-grid" id="muscleGrid"></div>
+    </div>
+  </div>
+
+  <!-- ======= GYM: EXERCISE LIST ======= -->
+  <div class="screen gym-scope" id="screen-gym-exercises" style="display:none;">
+    <div class="subheader">
+      <button class="back-btn" id="backFromGymExercises">&larr; Hierro</button>
+      <span class="subheader-title" id="muscleTitle">—</span>
+    </div>
+    <div class="gym-wrap">
+      <button class="btn-accent" id="openAddExercise">+ Nuevo ejercicio</button>
+      <div class="exercise-list" id="exerciseList"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======= GYM MODALS ======= -->
+<div class="overlay gym-scope" id="exerciseOverlay">
+  <div class="modal">
+    <h3>Nuevo ejercicio</h3>
+    <div class="field">
+      <label>Nombre del ejercicio</label>
+      <input type="text" id="exName" placeholder="ej. Press banca, Sentadilla"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelExercise">Cancelar</button>
+      <button class="btn-accent" id="saveExercise">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay gym-scope" id="setOverlay">
+  <div class="modal" style="max-width:400px;">
+    <h3 id="setModalTitle">Ejercicio</h3>
+    <div class="last-attempt-box" id="lastAttemptBox" style="display:none;"></div>
+    <div class="unit-toggle" id="setUnitToggle">
+      <button type="button" class="active" data-unit="kg">Kilos (kg)</button>
+      <button type="button" data-unit="lb">Libras (lb)</button>
+    </div>
+    <div class="sets-grid" id="setsGrid"></div>
+    <p class="hint">Llena solo los sets que hiciste. El comentario es opcional.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelSet">Cancelar</button>
+      <button class="btn-accent" id="saveSet">Guardar intento</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay gym-scope" id="historyOverlay">
+  <div class="modal" style="max-width:400px;">
+    <h3 id="historyModalTitle">Historial</h3>
+    <div id="historyList" class="history-list"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="closeHistory">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/openfoodfacts.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/food.js"></script>
+<script src="js/gym.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>
