@@ -1,13 +1,11 @@
 (function(){
   const $ = (id) => document.getElementById(id);
   const MUSCLES = ['Pecho','Espalda','Pierna','Hombros','Tríceps','Bíceps','Abdominales'];
-  // gymData: { "Pecho": [ { id, name, history: [ {date, unit, sets:[{weight,reps,comment}]}, ... ] } ] }
-  // history[0] is always the most recent attempt.
   let gymData = {};
   let currentMuscle = null;
   let currentExerciseId = null;
   let currentSetUnit = 'kg';
-  let historyExerciseRef = null; // exercise object currently open in the history modal
+  let historyExerciseRef = null;
 
   const BARBELL_SVG = '<svg viewBox="0 0 48 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'+
     '<rect x="0" y="9" width="4" height="6" rx="1"/><rect x="5" y="7" width="4" height="10" rx="1"/>'+
@@ -32,7 +30,6 @@
       gymData = r ? JSON.parse(r.value) : {};
     }catch(e){ gymData = {}; }
     MUSCLES.forEach(m => { if(!gymData[m]) gymData[m] = []; });
-    // Migrate old single-lastAttempt exercises to the history array format.
     MUSCLES.forEach(m => {
       (gymData[m] || []).forEach(ex => {
         if(!ex.history){
@@ -150,7 +147,6 @@
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
 
-  /* ---------- weight unit toggle (kg / lb) ---------- */
   function setSetUnit(unit){
     currentSetUnit = unit;
     $('setUnitToggle').querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.unit === unit));
@@ -161,7 +157,6 @@
     if(btn) setSetUnit(btn.dataset.unit);
   });
 
-  /* ---------- log-a-set modal ---------- */
   function openSetModal(ex){
     currentExerciseId = ex.id;
     $('setModalTitle').textContent = ex.name;
@@ -238,7 +233,6 @@
     showToast('Intento guardado');
   });
 
-  /* ---------- full history modal ---------- */
   function openHistoryModal(ex){
     historyExerciseRef = ex;
     $('historyModalTitle').textContent = 'Historial — ' + ex.name;
@@ -282,6 +276,39 @@
 
   $('closeHistory').addEventListener('click', () => $('historyOverlay').classList.remove('open'));
   $('historyOverlay').addEventListener('click', (e) => { if(e.target.id === 'historyOverlay') $('historyOverlay').classList.remove('open'); });
+
+  function escapeCsv(v){
+    if(v === null || v === undefined) v = '';
+    v = String(v);
+    if(/[",\n]/.test(v)) v = '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  }
+
+  function exportGymCSV(){
+    const rows = [['Musculo','Ejercicio','Fecha','Unidad','Set','Peso','Reps','Nota']];
+    MUSCLES.forEach(m => {
+      (gymData[m] || []).forEach(ex => {
+        (ex.history || []).forEach(att => {
+          att.sets.forEach((s, i) => {
+            rows.push([m, ex.name, att.date, att.unit || 'kg', i + 1, s.weight, s.reps, s.comment || '']);
+          });
+        });
+      });
+    });
+    if(rows.length === 1){ showToast('Todavía no hay datos de gym para exportar.'); return; }
+    const csv = rows.map(r => r.map(escapeCsv).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lifthub-hierro-' + todayStr() + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Descargando CSV…');
+  }
+  $('exportGymBtn').addEventListener('click', exportGymCSV);
 
   async function reload(){
     await loadGymData();
